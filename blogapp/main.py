@@ -1,5 +1,6 @@
+from typing import List
 from fastapi import FastAPI, Depends, status, Response, HTTPException
-from schemas import Blog
+from schemas import Blog, ShowBlog
 from database import SessionLocal, engine
 from sqlalchemy.orm import Session
 import models
@@ -25,14 +26,14 @@ def create_blog(request:Blog, db:Session= Depends(get_db)):
     return new_blog
 
 
-@app.get('/blogs', status_code=status.HTTP_200_OK)
+@app.get('/blogs', status_code=status.HTTP_200_OK, response_model=List[ShowBlog])
 def all_blogs(response:Response, db:Session= Depends(get_db)):
     blogs = db.query(models.Blog).all()
     if not blogs:
         response.status_code = status.HTTP_404_NOT_FOUND
     return blogs
 
-@app.get('/blog/{id}', status_code=status.HTTP_200_OK)
+@app.get('/blog/{id}', status_code=status.HTTP_200_OK, response_model=ShowBlog)
 def single_blog(id, response:Response, db:Session= Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id==id).first()
     if not blog:

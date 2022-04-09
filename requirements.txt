@@ -2,3 +2,5 @@ fastapi
 uvicordn
 sqlalchemy
 pysqlite3-binary
+passlib
+bcrypt

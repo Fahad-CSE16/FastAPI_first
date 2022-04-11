@@ -11,3 +11,7 @@ app.include_router(blog.router)
 
 
 
+@app.get("/")
+def root():
+    return {"message": "Hello World"}
+

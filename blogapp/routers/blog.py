@@ -6,13 +6,14 @@ from sqlalchemy.orm import Session
 from hashing import Hash
 import models
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/blog",
+    tags=['Blog']
+)
 
 
 
-
-
-@router.post("/create", status_code=status.HTTP_201_CREATED, tags=['blog'])
+@router.post("/", status_code=status.HTTP_201_CREATED)
 def create_blog(request:Blog, db:Session= Depends(get_db)):
     new_blog = models.Blog(title=request.title, description = request.description, created_by_id=1)
     db.add(new_blog)
@@ -21,14 +22,14 @@ def create_blog(request:Blog, db:Session= Depends(get_db)):
     return new_blog
 
 
-@router.get('/blogs', status_code=status.HTTP_200_OK, response_model=List[ShowBlog], tags=['blog'])
+@router.get('/', status_code=status.HTTP_200_OK, response_model=List[ShowBlog])
 def all_blogs(response:Response, db:Session= Depends(get_db)):
     blogs = db.query(models.Blog).all()
     if not blogs:
         response.status_code = status.HTTP_404_NOT_FOUND
     return blogs
 
-@router.get('/blog/{id}', status_code=status.HTTP_200_OK, response_model=ShowBlog, tags=['blog'])
+@router.get('/{id}', status_code=status.HTTP_200_OK, response_model=ShowBlog)
 def single_blog(id, response:Response, db:Session= Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id==id).first()
     if not blog:
@@ -37,7 +38,7 @@ def single_blog(id, response:Response, db:Session= Depends(get_db)):
         # return {'detail':f'Not found for id {id}'}
     return blog
 
-@router.put('/blog/{id}', status_code=status.HTTP_202_ACCEPTED, tags=['blog'])
+@router.put('/{id}', status_code=status.HTTP_202_ACCEPTED)
 def update_blog(id, request:Blog, db:Session= Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id==id)
     if not blog.first():
@@ -46,7 +47,7 @@ def update_blog(id, request:Blog, db:Session= Depends(get_db)):
     db.commit()
     return {'details':"updated"}
 
-@router.delete('/blog/{id}', status_code=status.HTTP_204_NO_CONTENT, tags=['blog'])
+@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_single_blog(id, response:Response, db:Session= Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id==id)
     if not blog.first():

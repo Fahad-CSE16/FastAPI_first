@@ -6,10 +6,13 @@ from sqlalchemy.orm import Session
 from hashing import Hash
 import models
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/user",
+    tags=['User']
+)
 
 
-@router.post("/user", status_code=status.HTTP_201_CREATED, response_model=ShowUser, tags=['user'])
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=ShowUser)
 def create_user(request:User, db:Session= Depends(get_db)):
     new_user = models.User(name=request.name, email = request.email, password = Hash.hash_password(request.password))
     db.add(new_user)
@@ -18,7 +21,7 @@ def create_user(request:User, db:Session= Depends(get_db)):
     return new_user
 
 
-@router.post('/user/verify', status_code=status.HTTP_200_OK, tags=['user'])
+@router.post('/verify', status_code=status.HTTP_200_OK)
 def verify_user(request:VerifyUser, response:Response, db:Session= Depends(get_db)):
     user = db.query(models.User).filter(models.User.name==request.name).first()
     if not user:
@@ -28,7 +31,7 @@ def verify_user(request:VerifyUser, response:Response, db:Session= Depends(get_d
     return {'details':"can't verify"}
     
 
-@router.get('/user/{id}', status_code=status.HTTP_200_OK, response_model=ShowUser, tags=['user'])
+@router.get('/{id}', status_code=status.HTTP_200_OK, response_model=ShowUser)
 def single_user(id, response:Response, db:Session= Depends(get_db)):
     user = db.query(models.User).filter(models.User.id==id).first()
     if not user:

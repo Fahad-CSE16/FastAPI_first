@@ -1,10 +1,10 @@
 from typing import List
-from fastapi import FastAPI, Depends, status, Response, HTTPException, APIRouter
-from schemas import Blog, ShowBlog, ShowUser, User, VerifyUser
-from database import SessionLocal, engine, get_db
+from fastapi import Depends, status, Response, HTTPException, APIRouter
+from schemas import Blog, ShowBlog,  User
+from database import get_db
 from sqlalchemy.orm import Session
-from hashing import Hash
 import models
+from oauth2 import get_current_user
 
 router = APIRouter(
     prefix="/blog",
@@ -23,7 +23,7 @@ def create_blog(request:Blog, db:Session= Depends(get_db)):
 
 
 @router.get('/', status_code=status.HTTP_200_OK, response_model=List[ShowBlog])
-def all_blogs(response:Response, db:Session= Depends(get_db)):
+def all_blogs(response:Response, db:Session= Depends(get_db), current_user: User = Depends(get_current_user)):
     blogs = db.query(models.Blog).all()
     if not blogs:
         response.status_code = status.HTTP_404_NOT_FOUND

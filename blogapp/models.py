@@ -11,6 +11,9 @@ class User(Base):
     password = Column(String)
     blogs = relationship('Blog', back_populates='created_by')
 
+class UserInDB(User):
+    hashed_password: str
+
 class Blog(Base):
     __tablename__ = 'blogs'
     id = Column(Integer, primary_key=True, index=True)

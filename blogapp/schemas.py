@@ -1,6 +1,13 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
 
 class Blog(BaseModel):
     title : str
@@ -20,8 +27,9 @@ class User(BaseModel):
     name : str
     email : str
     password : str
+
 class VerifyUser(BaseModel):
-    name : str
+    username : str
     password : str
 
 

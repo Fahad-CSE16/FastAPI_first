@@ -4,3 +4,4 @@ sqlalchemy
 pysqlite3-binary
 passlib
 bcrypt
+python-jose

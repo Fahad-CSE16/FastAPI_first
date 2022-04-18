@@ -21,14 +21,14 @@ def create_user(request:User, db:Session= Depends(get_db)):
     return new_user
 
 
-@router.post('/verify', status_code=status.HTTP_200_OK)
-def verify_user(request:VerifyUser, response:Response, db:Session= Depends(get_db)):
-    user = db.query(models.User).filter(models.User.name==request.name).first()
-    if not user:
-        raise HTTPException(detail=f'Not found for name {request.name}', status_code=status.HTTP_404_NOT_FOUND)
-    if Hash.verify_password(request.password, user.password):
-        return {'details':"verified"}
-    return {'details':"can't verify"}
+# @router.post('/verify', status_code=status.HTTP_200_OK)
+# def verify_user(request:VerifyUser, response:Response, db:Session= Depends(get_db)):
+#     user = db.query(models.User).filter(models.User.name==request.name).first()
+#     if not user:
+#         raise HTTPException(detail=f'Not found for name {request.name}', status_code=status.HTTP_404_NOT_FOUND)
+#     if Hash.verify_password(request.password, user.password):
+#         return {'details':"verified"}
+#     return {'details':"can't verify"}
     
 
 @router.get('/{id}', status_code=status.HTTP_200_OK, response_model=ShowUser)
